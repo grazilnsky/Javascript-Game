@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title></title>
+	<style> 
+		.theArena
+		{
+			margin: auto;
+			padding: 12px 12px;
+		}
+		.theArena canvas
+		{
+			padding: 2px 2px;
+			border-radius: 12px;
+		}
+		header button
+		{
+			margin: auto;
+			border-radius: 12px;
+			border: 3px solid black;
+			padding: 5px 12px;
+			width: 300px;
+			font-family: "Arial", sans-serif;
+			font-size:120%;
+			background-color: lightgray;
+		}
+		header p
+		{
+			margin:auto;
+			font-family:"Arial", sans-serif;
+			font-size:120%;
+			border:3px solid black;
+			border-radius:12px;
+			background-color: lightgray;
+			padding:5px 12px;
+			display: inline;
+		}
+		header
+		{
+			padding:12px 12px;
+			margin:auto;
+			display:inline-block;
+		}
+	</style>
+</head>
+<body>
+	
+	<header>
+	
+		<button type="button" id="restart" onClick="window.location.reload()">Restart Game</button>
+		
+		<button type="button" id="help" onclick="displayInfo('Click the image as quickly as you can. You lose when you miss the image. Your average time is the total time divided by your score')" >Help</button>
+		
+		<img src="img.png" height="15px" width="15px" id="target" style="display: none">
+		
+		<img src="replace.png" height="15px" width="15px" id="replace" style="display:none">
+		
+		<img src="background.jpg" height="1850px", width="850px" id="back" style="display:none">
+		
+		<p id="info" style="display:none"></p>
+		
+	</header>
+	
+	
+	<section>
+		<div class="theArena">
+			<canvas id="arena" width="1850px" height="850px" style="border: 3px solid black" onclick="respawn(event)" onclick="startTimer()">
+			</canvas>
+		</div>
+	</section>
+	
+	<script>
+	
+		function displayInfo(text)
+		{
+			document.getElementById("info").innerHTML=text;
+			document.getElementById("info").style.display="inline";
+		}
+		function randomNumber(min, max) 
+		{
+			return Math.random() * (max - min) + min;
+		}
+		
+		var canvas = document.getElementById("arena");
+		var content = canvas.getContext("2d");
+		var score=0;
+		var t=setInterval(startTimer, 10);
+		var clockOff=0;
+		var totalTime=0;
+		
+		window.onload = function() 
+		{
+			var canvas = document.getElementById("arena");
+			var content = canvas.getContext("2d");
+			var img = document.getElementById("target");
+			var repl=document.getElementById("replace");
+			imgX=randomNumber(50, 1800);
+			imgY=randomNumber(50, 800);
+			content.drawImage(img, imgX, imgY);
+		};	
+		
+			
+		function startTimer()
+		{	
+				t=t+0.01;
+		}
+		
+		
+		function respawn(event)
+		{
+			if(score==0)
+				t=0;
+			var canvas = document.getElementById("arena");
+			var content = canvas.getContext("2d");
+			var img = document.getElementById("target");
+			var repl=document.getElementById("replace");
+			var background=document.getElementById("back");
+			var x = event.clientX;
+			var y = event.clientY;
+			
+			if(x>imgX+15 && x<imgX+105 && y>imgY+70 && y<imgY+140)
+			{
+				content.drawImage(repl, imgX, imgY);
+				imgX=randomNumber(50, 1800);
+				imgY=randomNumber(50, 800);
+				content.drawImage(img, imgX, imgY);
+				score=score+1;	
+			}
+			else
+			{
+				startTimer();	
+				var avgTime=0;
+				if(clockOff==0)
+				{
+					clockOff=1;
+					totalTime=t;
+				}
+				if(score==0)
+					avgTime=0;
+				else
+					avgTime=totalTime/score;
+				avgTime=avgTime.toFixed(2);
+				content.drawImage(back, 0, 0, 1850, 850);
+				content.font = "100px Calibri";
+				content.fillStyle="white";
+				content.fillText("Game Over",650,400);
+				content.fillText("Score: ",700,480);
+				content.fillText(score,1000,480);
+				content.fillText("Average Time: ", 540, 560);
+				content.fillText(avgTime, 1200, 560);
+			}
+			
+		}		
+	</script>
+</body>
+</html>
